@@ -120,6 +120,17 @@ python eval/merge_runs.py --dry-run   # report only
 python eval/merge_runs.py             # write results/
 ```
 
+## Browsing the benchmark
+
+```bash
+streamlit run viewer/dashboard.py
+```
+
+Leaderboard with per-vulnerability-class breakdowns, and a task explorer showing the
+prompt, vulnerable app, spec suite, exploit, exploit output, reference patch and diff for
+any of the 1,000 tasks. Raw model responses are not published here (52MB), so those tabs
+show the per-task outcome and failure stage instead.
+
 ## Layout
 
 ```
@@ -128,6 +139,7 @@ eval/eval_models.py            scores a model against the benchmark
 eval/merge_runs.py             folds per-run logs into the leaderboard
 results/eval_outcomes.jsonl    per-(model, task) outcomes behind the leaderboard
 results/leaderboard.json       aggregate scores with per-class breakdowns
+viewer/dashboard.py            Streamlit leaderboard and task explorer
 docs/dataset-card.md           Hugging Face dataset card
 ```
 
