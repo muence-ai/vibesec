@@ -1,0 +1,13 @@
+.DS_Store
+__pycache__/
+*.pyc
+.env
+.env.*
+.venv/
+venv/
+
+# Derived: rebuild with `python eval/merge_runs.py`
+results/eval_results.jsonl
+
+# Per-run eval logs from your own runs
+eval_runs/

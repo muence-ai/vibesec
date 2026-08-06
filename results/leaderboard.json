@@ -1,0 +1,155 @@
+{
+  "anthropic/claude-opus-4-8": {
+    "passed": 649,
+    "total": 1000,
+    "scored": 1000,
+    "pass_rate": 0.649,
+    "pass_rate_scored": 0.649,
+    "requirements_changed": 0,
+    "by_class": {
+      "idor": 467,
+      "missing_auth": 97,
+      "privilege_escalation": 17,
+      "mass_assignment": 59,
+      "other": 4,
+      "path_traversal": 2,
+      "sql_injection": 3
+    },
+    "stages": {
+      "exploit_still_works": 307,
+      "passed": 649,
+      "spec_broken": 44
+    }
+  },
+  "anthropic/claude-sonnet-4.6": {
+    "passed": 373,
+    "total": 1000,
+    "scored": 1000,
+    "pass_rate": 0.373,
+    "pass_rate_scored": 0.373,
+    "requirements_changed": 0,
+    "by_class": {
+      "idor": 248,
+      "missing_auth": 74,
+      "privilege_escalation": 7,
+      "mass_assignment": 33,
+      "path_traversal": 6,
+      "other": 3,
+      "sql_injection": 2
+    },
+    "stages": {
+      "spec_broken": 398,
+      "passed": 373,
+      "exploit_still_works": 229
+    }
+  },
+  "wandb/glm-5.2": {
+    "passed": 337,
+    "total": 1000,
+    "scored": 1000,
+    "pass_rate": 0.337,
+    "pass_rate_scored": 0.337,
+    "requirements_changed": 0,
+    "by_class": {
+      "idor": 233,
+      "missing_auth": 54,
+      "privilege_escalation": 9,
+      "mass_assignment": 36,
+      "other": 3,
+      "path_traversal": 1,
+      "sql_injection": 1
+    },
+    "stages": {
+      "exploit_still_works": 596,
+      "passed": 337,
+      "spec_broken": 61,
+      "requirements_changed": 6
+    }
+  },
+  "wandb/gpt-oss-120b": {
+    "passed": 111,
+    "total": 1000,
+    "scored": 1000,
+    "pass_rate": 0.111,
+    "pass_rate_scored": 0.111,
+    "requirements_changed": 0,
+    "by_class": {
+      "missing_auth": 24,
+      "idor": 74,
+      "mass_assignment": 7,
+      "privilege_escalation": 2,
+      "path_traversal": 3,
+      "other": 1
+    },
+    "stages": {
+      "exploit_still_works": 421,
+      "spec_broken": 468,
+      "passed": 111
+    }
+  },
+  "wandb/kimi-k2.7-code": {
+    "passed": 372,
+    "total": 1000,
+    "scored": 1000,
+    "pass_rate": 0.372,
+    "pass_rate_scored": 0.372,
+    "requirements_changed": 0,
+    "by_class": {
+      "idor": 274,
+      "privilege_escalation": 17,
+      "mass_assignment": 40,
+      "missing_auth": 36,
+      "other": 2,
+      "path_traversal": 2,
+      "sql_injection": 1
+    },
+    "stages": {
+      "exploit_still_works": 347,
+      "spec_broken": 242,
+      "passed": 372,
+      "no_response_after_retries": 39
+    }
+  },
+  "wandb/nemotron-3-ultra": {
+    "passed": 289,
+    "total": 1000,
+    "scored": 1000,
+    "pass_rate": 0.289,
+    "pass_rate_scored": 0.289,
+    "requirements_changed": 0,
+    "by_class": {
+      "idor": 200,
+      "missing_auth": 48,
+      "mass_assignment": 26,
+      "privilege_escalation": 6,
+      "path_traversal": 8,
+      "other": 1
+    },
+    "stages": {
+      "exploit_still_works": 307,
+      "spec_broken": 395,
+      "passed": 289,
+      "requirements_changed": 9
+    }
+  },
+  "mistralai/mistral-medium-3-5": {
+    "passed": 129,
+    "total": 1000,
+    "scored": 1000,
+    "pass_rate": 0.129,
+    "pass_rate_scored": 0.129,
+    "requirements_changed": 0,
+    "by_class": {
+      "idor": 82,
+      "mass_assignment": 11,
+      "missing_auth": 31,
+      "path_traversal": 4,
+      "privilege_escalation": 1
+    },
+    "stages": {
+      "exploit_still_works": 819,
+      "spec_broken": 52,
+      "passed": 129
+    }
+  }
+}

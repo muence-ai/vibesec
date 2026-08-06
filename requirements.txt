@@ -1,0 +1,7 @@
+# Local tooling (factory orchestration, aggregation, dashboard).
+# Sandboxed workers define their own deps inside their Modal images — see eval/eval_models.py.
+modal
+openai
+python-dotenv
+streamlit
+pandas
