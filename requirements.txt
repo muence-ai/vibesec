@@ -1,7 +1,6 @@
-# Local tooling (factory orchestration, aggregation, dashboard).
-# Sandboxed workers define their own deps inside their Modal images — see eval/eval_models.py.
-modal
-openai
-python-dotenv
+# Dependencies for the hosted dashboard (viewer/dashboard.py).
+# Streamlit Community Cloud installs this file on every cold start, so it holds
+# only what the viewer imports. Running the benchmark needs more — see
+# requirements-eval.txt.
 streamlit
 pandas

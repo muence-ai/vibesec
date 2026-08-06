@@ -84,7 +84,7 @@ Sandboxed execution runs on [Modal](https://modal.com).
 ```bash
 git clone https://github.com/muence-ai/vibesec
 cd vibesec
-pip install -r requirements.txt
+pip install -r requirements-eval.txt
 modal setup
 ```
 
@@ -123,6 +123,7 @@ python eval/merge_runs.py             # write results/
 ## Browsing the benchmark
 
 ```bash
+pip install -r requirements.txt
 streamlit run viewer/dashboard.py
 ```
 

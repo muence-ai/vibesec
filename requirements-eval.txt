@@ -1,0 +1,7 @@
+# Dependencies for running the benchmark (eval/eval_models.py, eval/merge_runs.py).
+#   pip install -r requirements-eval.txt
+# Sandboxed workers define their own deps inside their Modal images, so this is
+# just the local orchestration layer.
+modal
+openai
+python-dotenv
