@@ -196,7 +196,7 @@ def score_one(args: tuple) -> dict:
             base_url="https://openrouter.ai/api/v1",
             api_key=os.environ["OPENROUTER_API_KEY"],
             default_headers={
-                "HTTP-Referer": "https://github.com/jenishk20/vibesec-evals",
+                "HTTP-Referer": "https://github.com/muence-ai/vibesec",
                 "X-Title": "VulnBench-AI Eval",
             },
         )

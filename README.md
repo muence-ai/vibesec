@@ -4,8 +4,19 @@ VibeSec is a benchmark for measuring whether AI coding models write **secure** c
 just working code. Every task is verified by execution: a real exploit runs against the
 model's patch and either fires or it doesn't. No model judges the result.
 
-v1.0.0 contains **1,000 execution-verified security-patching tasks** across seven
-vulnerability classes, on FastAPI/Python.
+v1.1.0 contains **1,000 execution-verified security-patching tasks** across seven
+vulnerability classes, on FastAPI/Python. The same release is published on Hugging Face
+as [`muence/vibesec`](https://huggingface.co/datasets/muence/vibesec) (tag `v1.1.0`).
+
+### Changes from v1.0.0
+
+v1.0.0's 1,000 tasks contained generation-seed fan-out duplicates: only **755 unique
+scenarios**. v1.1.0 keeps one task per scenario and adds **245 seed-unique tasks** (238
+from a batch targeting under-represented classes, plus 7 for balance), for 1,000 truly
+unique tasks. Every v1.0.0 score was inflated by the redundancy, so the leaderboard is
+recomputed on the corrected set. The model panel also changed: `gpt-oss-120b`,
+`kimi-k2.7-code` and `mistral-medium-3-5` were dropped; Nemotron 3.5 Lightning and
+Gemini 3.8 Flash were added.
 
 ## Why execution verification
 
@@ -60,13 +71,16 @@ insecure patch. Models are told this rule in the prompt.
 
 | Model | Secure patches | |
 |---|---:|---|
-| claude-opus-4-8 | 649 / 1000 | 64.9% |
-| claude-sonnet-4.6 | 373 / 1000 | 37.3% |
-| kimi-k2.7-code | 372 / 1000 | 37.2% |
-| glm-5.2 | 337 / 1000 | 33.7% |
-| nemotron-3-ultra | 289 / 1000 | 28.9% |
-| mistral-medium-3-5 | 129 / 1000 | 12.9% |
-| gpt-oss-120b | 111 / 1000 | 11.1% |
+| claude-opus-4-8 | 554 / 1000 | 55.4% |
+| gemini-3.8-flash | 551 / 1000 | 55.1% |
+| claude-sonnet-4.6 | 328 / 1000 | 32.8% |
+| glm-5.2 | 279 / 1000 | 27.9% |
+| nemotron-3-ultra | 274 / 1000 | 27.4% |
+| nemotron-3.5-lightning | 256 / 1000 | 25.6% |
+
+Gemini 3.8 Flash was run with thinking disabled: on default settings it truncated before
+completing the required file format on ~51% of tasks. All other models use their
+defaults.
 
 `results/eval_outcomes.jsonl` has the per-`(model, task)` outcome behind every number —
 which task, which vulnerability class, pass or fail, and the failure stage.
@@ -128,9 +142,14 @@ streamlit run viewer/dashboard.py
 ```
 
 Leaderboard with per-vulnerability-class breakdowns, and a task explorer showing the
-prompt, vulnerable app, spec suite, exploit, exploit output, reference patch and diff for
-any of the 1,000 tasks. Raw model responses are not published here (52MB), so those tabs
-show the per-task outcome and failure stage instead.
+prompt, vulnerable app, spec suite, exploit, exploit output, reference patch, diff and raw
+model response for any of the 1,000 tasks.
+
+The dashboard loads the dataset and eval results from the Hugging Face release
+(`muence/vibesec@v1.1.0`), which includes the raw model responses (57MB) that are not
+committed here. It falls back to this repository's `dataset.jsonl` and
+`results/eval_outcomes.jsonl` when the Hub is unreachable. To point it at a different
+release, set `VIBESEC_HF_REVISION` (an env var or Streamlit secret).
 
 ## Layout
 
@@ -148,8 +167,8 @@ Scripts resolve paths relative to the repository root — run them from here.
 
 ## Known limitations
 
-- **Single framework.** Every v1.0.0 task is FastAPI/Python.
-- **Class imbalance.** 68.8% of v1.0.0 is IDOR; SQL injection is 0.6%. See
+- **Single framework.** Every v1.1.0 task is FastAPI/Python.
+- **Class imbalance.** 51.3% of v1.1.0 is IDOR; `other` is 1.2%. See
   `PROVENANCE.md` for the full distribution.
 - **Short horizon.** ~2 files per task, so these are localized patches rather than
   multi-subsystem work.

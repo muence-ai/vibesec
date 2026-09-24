@@ -4,3 +4,5 @@
 # requirements-eval.txt.
 streamlit
 pandas
+# The dashboard reads its dataset and eval results from the Hugging Face Hub.
+huggingface_hub
