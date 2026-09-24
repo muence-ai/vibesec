@@ -1,6 +1,6 @@
 # Provenance
 
-How VibeSec v1.0.0 was produced, and what that means if you want to train on it.
+How VibeSec v1.1.0 was produced, and what that means if you want to train on it.
 
 ## Applications are machine-generated
 
@@ -37,22 +37,27 @@ verification most reliably, not which classes matter most in the real world.
 
 ## Composition
 
-1,000 tasks, merged from two generation batches (634 + 366) with zero duplicate ids.
+1,000 tasks with 1,000 distinct seed prompts and zero duplicate ids.
+
+v1.0.0 also had 1,000 tasks, but generation fanned some seed prompts out into several
+near-identical tasks, leaving only 755 unique scenarios. v1.1.0 keeps one task per
+scenario (755) and adds 245 seed-unique tasks: 238 from a batch targeting
+under-represented classes, plus 7 for balance.
 
 | Vulnerability class | Tasks | Share |
 |---|---:|---:|
-| idor | 688 | 68.8% |
-| missing_auth | 139 | 13.9% |
-| mass_assignment | 92 | 9.2% |
-| privilege_escalation | 35 | 3.5% |
-| path_traversal | 31 | 3.1% |
-| other | 9 | 0.9% |
-| sql_injection | 6 | 0.6% |
+| idor | 513 | 51.3% |
+| missing_auth | 150 | 15.0% |
+| mass_assignment | 130 | 13.0% |
+| privilege_escalation | 80 | 8.0% |
+| sql_injection | 58 | 5.8% |
+| path_traversal | 57 | 5.7% |
+| other | 12 | 1.2% |
 
 All tasks: FastAPI / Python, ~2 files per application.
 
 `sha256` of `dataset.jsonl`:
-`7c1bbf2d1c1d507732f6109f39007c0803220d720c45f33b372a07c3f88f450d`
+`80c987c89cbea1dd656bef848d2313451921a48f1ea6395d02247babfe1fcc5e`
 
 The IDOR concentration is the most important caveat in this release. A model can score
 respectably here by learning one authorization pattern well. Read per-class results in

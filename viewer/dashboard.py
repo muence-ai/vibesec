@@ -17,9 +17,17 @@ from urllib.parse import quote
 
 import pandas as pd
 import streamlit as st
+from huggingface_hub import hf_hub_download
 
 
 APP_ROOT = Path(__file__).resolve().parent.parent  # viewer/ -> repo root
+
+# The Hugging Face dataset is the source of truth for what the dashboard shows, so a
+# new release only needs a push + tag on the Hub, not a commit here. Pin a tag for a
+# reproducible board; set VIBESEC_HF_REVISION (env var or Streamlit secret) to move it.
+HF_DATASET_REPO = "muence/vibesec"
+HF_REVISION = os.environ.get("VIBESEC_HF_REVISION", "v1.1.0")
+# Local copies, used only when the Hub is unreachable (offline dev, HF outage).
 DATASET_PATH = APP_ROOT / "dataset.jsonl"
 EVAL_RESULTS_PATH = APP_ROOT / "results" / "eval_outcomes.jsonl"
 FEEDBACK_PATH = APP_ROOT / "community_feedback.jsonl"
@@ -35,10 +43,10 @@ FEEDBACK_ENABLED = os.environ.get("VIBESEC_ENABLE_FEEDBACK", "").strip().lower()
     "yes",
     "on",
 }
-REPO_URL = "https://github.com/jenishk20/vibesec-evals"
+REPO_URL = "https://github.com/muence-ai/vibesec"
 FORK_URL = f"{REPO_URL}/fork"
 ISSUES_URL = f"{REPO_URL}/issues/new"
-HF_DATASET_URL = "https://huggingface.co/datasets/muence/vibesec"
+HF_DATASET_URL = f"https://huggingface.co/datasets/{HF_DATASET_REPO}"
 EXCLUDED_MODELS = {"google/gemini-2.5-pro"}
 MODEL_LABELS = {
     "anthropic/claude-opus-4-8": "Claude Opus 4.8",
@@ -47,6 +55,8 @@ MODEL_LABELS = {
     "wandb/kimi-k2.7-code": "Kimi K2.7 Code",
     "wandb/glm-5.2": "GLM 5.2",
     "wandb/gpt-oss-120b": "GPT-OSS 120B",
+    "wandb/nemotron-3.5-lightning": "Nemotron 3.5 Lightning",
+    "google/gemini-3.8-flash": "Gemini 3.8 Flash",
 }
 
 
@@ -255,6 +265,25 @@ def load_jsonl(path: str) -> list[dict]:
     return _load_jsonl(str(source), source.stat().st_mtime)
 
 
+@st.cache_data(show_spinner="Fetching benchmark data from Hugging Face...", ttl=3600)
+def resolve_data_file(filename: str, local_path: str) -> tuple[str, str]:
+    """Return (local path, source label) for a release file, preferring the Hub.
+
+    hf_hub_download caches on disk, and the TTL bounds how often a moving revision
+    such as "main" is re-checked.
+    """
+    try:
+        path = hf_hub_download(
+            repo_id=HF_DATASET_REPO,
+            filename=filename,
+            repo_type="dataset",
+            revision=HF_REVISION,
+        )
+        return path, f"{HF_DATASET_REPO}@{HF_REVISION}"
+    except Exception:
+        return local_path, f"local {Path(local_path).relative_to(APP_ROOT)}"
+
+
 @st.cache_data(show_spinner=False)
 def load_feedback(path: str) -> list[dict]:
     return load_jsonl(path)
@@ -371,14 +400,16 @@ def feedback_counts(feedback: list[dict]) -> dict[str, Counter]:
     return counts
 
 
-dataset = load_jsonl(str(DATASET_PATH))
-raw_results = load_jsonl(str(EVAL_RESULTS_PATH))
+dataset_path, dataset_source = resolve_data_file("dataset.jsonl", str(DATASET_PATH))
+results_path, results_source = resolve_data_file("eval_results.jsonl", str(EVAL_RESULTS_PATH))
+dataset = load_jsonl(dataset_path)
+raw_results = load_jsonl(results_path)
 results = [result for result in raw_results if result.get("model") not in EXCLUDED_MODELS]
 feedback = load_feedback(str(FEEDBACK_PATH))
 feedback_by_entry = feedback_counts(feedback)
 
 if not dataset:
-    st.error(f"{DATASET_PATH} was not found. Build the dataset before opening the dashboard.")
+    st.error(f"No dataset found at {dataset_source}. Check VIBESEC_HF_REVISION or network access to the Hub.")
     st.stop()
 
 entry_by_id = {entry["id"]: entry for entry in dataset}
@@ -408,6 +439,7 @@ if results:
     st.sidebar.caption("Evaluations")
     st.sidebar.write(f"{len({result['model'] for result in results})} models")
     st.sidebar.write(f"{len(results)} model-task runs")
+st.sidebar.caption(f"Data: {results_source}")
 
 st.sidebar.divider()
 st.sidebar.link_button("Star on GitHub", REPO_URL, width="stretch")
@@ -762,9 +794,10 @@ def render_task_explorer() -> None:
         response_tab, parsed_tab = st.tabs(["Raw Response", "Parsed Patch"])
         with response_tab:
             st.code(model_result.get("raw_response",
-                    "Raw model responses are not published in this repository "
-                    "(52MB). The per-task outcome, vulnerability class and failure "
-                    "stage are in results/eval_outcomes.jsonl."), language="text")
+                    "No raw response in this data source. Raw model responses ship "
+                    "with the Hugging Face release, not this repository; the "
+                    "per-task outcome and failure stage are in "
+                    "results/eval_outcomes.jsonl."), language="text")
         with parsed_tab:
             patched = model_result.get("patched_files", {})
             if patched:
